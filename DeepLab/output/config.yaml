@@ -266,7 +266,7 @@ MODEL:
     - 48
     PROJECT_FEATURES:
     - res2
-  WEIGHTS: detectron2://DeepLab/R-103.pkl
+  WEIGHTS: /home/yoann/PycharmProjects/VECCAR/DeepLab/weights/model_final_a8a355.pkl
 OUTPUT_DIR: ./output
 SEED: -1
 SOLVER:
