@@ -10,10 +10,8 @@ DATASETS:
   PRECOMPUTED_PROPOSAL_TOPK_TRAIN: 2000
   PROPOSAL_FILES_TEST: []
   PROPOSAL_FILES_TRAIN: []
-  TEST:
-  - cityscapes_fine_sem_seg_val
-  TRAIN:
-  - cityscapes_fine_sem_seg_train
+  TEST: ''
+  TRAIN: my_dataset
 GLOBAL:
   HACK: 1.0
 INPUT:
@@ -58,7 +56,7 @@ MODEL:
       - 256
       - 512
   BACKBONE:
-    FREEZE_AT: 0
+    FREEZE_AT: 2
     NAME: build_resnet_deeplab_backbone
   DEVICE: cuda
   FPN:
@@ -257,16 +255,16 @@ MODEL:
     IN_FEATURES:
     - res2
     - res5
-    LOSS_TYPE: hard_pixel_mining
+    LOSS_TYPE: cross_entropy
     LOSS_WEIGHT: 1.0
     NAME: DeepLabV3PlusHead
-    NORM: SyncBN
-    NUM_CLASSES: 19
+    NORM: BN
+    NUM_CLASSES: 4
     PROJECT_CHANNELS:
     - 48
     PROJECT_FEATURES:
     - res2
-  WEIGHTS: /home/yoann/PycharmProjects/VECCAR/DeepLab/weights/model_final_a8a355.pkl
+  WEIGHTS: detectron2://DeepLab/R-103.pkl
 OUTPUT_DIR: ./output
 SEED: -1
 SOLVER:
@@ -281,7 +279,7 @@ SOLVER:
     ENABLED: false
     NORM_TYPE: 2.0
   GAMMA: 0.1
-  IMS_PER_BATCH: 16
+  IMS_PER_BATCH: 1
   LR_SCHEDULER_NAME: WarmupPolyLR
   MAX_ITER: 90000
   MOMENTUM: 0.9

@@ -13,7 +13,7 @@ def add_deeplab_config(cfg):
     cfg.SOLVER.POLY_LR_POWER = 0.9
     cfg.SOLVER.POLY_LR_CONSTANT_ENDING = 0.0
     # Loss type, choose from `cross_entropy`, `hard_pixel_mining`.
-    cfg.MODEL.SEM_SEG_HEAD.LOSS_TYPE = "hard_pixel_mining"
+    cfg.MODEL.SEM_SEG_HEAD.LOSS_TYPE = "cross_entropy"
     # DeepLab settings
     cfg.MODEL.SEM_SEG_HEAD.PROJECT_FEATURES = ["res2"]
     cfg.MODEL.SEM_SEG_HEAD.PROJECT_CHANNELS = [48]

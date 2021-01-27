@@ -10,14 +10,39 @@ This script is a simplified version of the training script in detectron2/tools.
 import os
 import torch
 
+# Perso
+import cv2
+import numpy as np
+from detectron2.utils.visualizer import Visualizer
+from matplotlib import pyplot
+import matplotlib.image as mpimg
+import os
+import glob
+
 import detectron2.data.transforms as T
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
-from detectron2.data import DatasetMapper, MetadataCatalog, build_detection_train_loader
-from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch
+from detectron2.data import DatasetMapper, MetadataCatalog, build_detection_train_loader, DatasetCatalog
+from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch, DefaultPredictor
 from detectron2.evaluation import CityscapesSemSegEvaluator, DatasetEvaluators, SemSegEvaluator
 from detectron2.projects.deeplab import add_deeplab_config, build_lr_scheduler
+
+
+def get_cartography_dicts(img_dir):
+    img_path = os.path.join(img_dir, "Img/*")
+    img_height = 512
+    img_width = 1024
+    dataset_dicts = []
+    for idx, img in enumerate(glob.glob(img_path)):
+        record = {}
+        record["file_name"] = img
+        record["image_id"] = idx
+        record["height"] = img_height
+        record["width"] = img_width
+        record["sem_seg_file_name"] = os.path.join(img_dir, "Gt/", os.path.basename(img))
+        dataset_dicts.append(record)
+    return dataset_dicts
 
 
 def build_sem_seg_train_aug(cfg):
@@ -67,7 +92,7 @@ class Trainer(DefaultTrainer):
             )
         if evaluator_type == "cityscapes_sem_seg":
             assert (
-                torch.cuda.device_count() >= comm.get_rank()
+                    torch.cuda.device_count() >= comm.get_rank()
             ), "CityscapesEvaluator currently do not work with multiple machines."
             return CityscapesSemSegEvaluator(dataset_name)
         if len(evaluator_list) == 0:
@@ -80,7 +105,6 @@ class Trainer(DefaultTrainer):
             return evaluator_list[0]
         return DatasetEvaluators(evaluator_list)
 
-    @classmethod
     def build_train_loader(cls, cfg):
         if "SemanticSegmentor" in cfg.MODEL.META_ARCHITECTURE:
             mapper = DatasetMapper(cfg, is_train=True, augmentations=build_sem_seg_train_aug(cfg))
@@ -105,12 +129,25 @@ def setup(args):
     add_deeplab_config(cfg)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
-    cfg.freeze()
+    # cfg.freeze()
+
+    # VECCAR
+    cfg.SOLVER.IMS_PER_BATCH = 1
+    cfg.MODEL.BACKBONE.FREEZE_AT = 2
+    cfg.MODEL.SEM_SEG_HEAD.NUM_CLASSES = 4
+    cfg.DATASETS.TRAIN = "my_dataset"
+    cfg.DATASETS.TEST = ""
+    cfg.MODEL.SEM_SEG_HEAD.NORM = "BN"
+    # VECCAR
+
     default_setup(cfg, args)
     return cfg
 
 
 def main(args):
+    DatasetCatalog.register("my_dataset", lambda d=None: get_cartography_dicts("./datasets/cartographie/classic/"))
+    MetadataCatalog.get("my_dataset").set(stuff_classes=["background", "foret", "autoroute", "route"],
+                                          evaluator_type="cityscapes_sem_seg")
     cfg = setup(args)
 
     if args.eval_only:
@@ -122,14 +159,31 @@ def main(args):
         return res
 
     trainer = Trainer(cfg)
-    trainer.resume_or_load(resume=args.resume)
-    return trainer.train()
+    trainer.resume_or_load(resume=False)
+    trainer.train()
+
+    im = cv2.imread("datasets/cartographie/other/Tours_test.png")
+    im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+    pred = DefaultPredictor(cfg)
+    outputs = pred(im)
+    outputs = outputs["sem_seg"].to("cpu")
+    output = torch.argmax(outputs, 0)
+    v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN), scale=1.2)
+    out = v.draw_sem_seg(output)
+    out = out.get_image()[:, :, ::-1]
+    cv2.imwrite("./output/result_rgb_annotated_1_.jpg", out)
+
+    return None
 
 
 if __name__ == "__main__":
     args = default_argument_parser().parse_args()
+    print(MetadataCatalog.list())
     print("Command Line Args:", args)
     args.config_file = "configs/Cityscapes-SemanticSegmentation/deeplab_v3_plus_R_103_os16_mg124_poly_90k_bs16.yaml"
+    args.eval_only = False
+    args.num_gpus = 1
+
     launch(
         main,
         args.num_gpus,
