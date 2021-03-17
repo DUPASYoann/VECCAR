@@ -1,4 +1,4 @@
-# VECCAR Vectorisation de carte raster
+# VECCAR : Vectorisation de carte raster
 Projet Recherche et Developpement
 
 Encadrants : Dominique ANDRIEUX ; Romain RAVEAUX ; Barthélémy SERRES
