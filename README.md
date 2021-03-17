@@ -1,9 +1,6 @@
 # VECCAR : Vectorisation de carte raster
-Projet Recherche et Developpement
+### Projet Recherche et Developpement
 
-Encadrants : Dominique ANDRIEUX ; Romain RAVEAUX ; Barthélémy SERRES
-
-Etudiant : Yoann DUPAS
 
 ## Description
 
@@ -11,3 +8,7 @@ Etudiant : Yoann DUPAS
 
 ## Wiki
 
+
+Encadrants : Dominique ANDRIEUX ; Romain RAVEAUX ; Barthélémy SERRES
+
+Etudiant : Yoann DUPAS <yoann.dupas@outlook.fr>
