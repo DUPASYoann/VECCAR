@@ -1,19 +1,14 @@
-# VECCAR
-Projet Recherche et Developpement
-Encadrants : Dominique ANDRIEUX ; Romain RAVEAUX ; Barthélémy SERRES
-Etudiant : Yoann DUPAS
+# VECCAR : Vectorisation de carte raster
+### Projet Recherche et Developpement
+
 
 ## Description
 
 ## Guide d'installation
 
-## Guide d'utilisation
+## Wiki
 
-## Problèmes rencontrées
 
-## Fonctionnement rapide de l'API DetectronV2
+Encadrants : Dominique ANDRIEUX ; Romain RAVEAUX ; Barthélémy SERRES
 
-## Conseils de développement
-
-## Guide de reprise
-
+Etudiant : Yoann DUPAS <yoann.dupas@outlook.fr>
