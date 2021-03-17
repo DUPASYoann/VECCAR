@@ -9,13 +9,5 @@ Etudiant : Yoann DUPAS
 
 ## Guide d'installation
 
-## Guide d'utilisation
-
-## Problèmes rencontrées
-
-## Fonctionnement rapide de l'API DetectronV2
-
-## Conseils de développement
-
-## Guide de reprise
+## Wiki
 
