@@ -11,7 +11,7 @@ VECCAR est un projet visant à élaborer une solution permettant la vectorisatio
 
 ## Guide d'installation
 
-### Requirment
+### Requirements
 
 * Linux OS
 * CUDA (voir https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation)
@@ -26,7 +26,7 @@ Vérifiez bien les compatibilitées des versions entre CUDA Torch et Detectronv2
 
 ## Wiki
 
-Pour plus d'information sur le projet cliquez [ici]()
+Pour plus d'information sur le projet cliquez [ici](https://github.com/DUPASYoann/VECCAR/wiki)
 
 ---
 
