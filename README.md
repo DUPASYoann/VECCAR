@@ -20,17 +20,17 @@ VECCAR est un projet visant à élaborer une solution permettant la vectorisatio
 * opencv-python
 * Tensorboard (pour la visualisation)
 
-#### __ATTENTION AUX VERSIONS__
+#### **ATTENTION AUX VERSIONS**
 
 Vérifiez bien les compatibilitées des versions entre CUDA Torch et Detectronv2.
 
-#### Si CUDA 10.1 d'installé
-
-pip install -r requirements.txt
-
 ## Wiki
 
+Pour plus d'information sur le projet cliquez [ici]()
 
-Encadrants : Dominique ANDRIEUX ; Romain RAVEAUX ; Barthélémy SERRES
+---
 
+Encadrants : Dominique ANDRIEUX ; Romain RAVEAUX ; Barthélémy SERRES  
 Etudiant : Yoann DUPAS <yoann.dupas@outlook.fr>
+
+---
