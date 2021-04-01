@@ -7,9 +7,9 @@ DeepLab Training Script.
 This script is a simplified version of the training script in detectron2/tools.
 """
 
-import os
-from datetime import datetime
+import tempfile
 
+from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
 from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.engine import default_argument_parser, default_setup, launch
@@ -31,9 +31,9 @@ def setup(args):
 
 
 def main(args):
+
     for d in ["train", "val"]:
-        DatasetCatalog.register("carte_" + d,
-                                lambda d=d: dataset_carto.get_cartography_dicts("dataset/" + d))
+        DatasetCatalog.register("carte_" + d, lambda d=d: dataset_carto.get_cartography_dicts("dataset/" + d))
         MetadataCatalog.get("carte_" + d).set(stuff_classes=["background", "foret", "autoroute", "route"],
                                               evaluator_type="sem_seg",
                                               stuff_colors=[(140, 34, 140), (34, 139, 34), (255, 20, 147),
@@ -41,28 +41,28 @@ def main(args):
 
     cfg = setup(args)
 
-    trainer = Trainer(cfg)
-    trainer.resume_or_load(resume=True)
-    trainer.train()
+    model = Trainer.build_model(cfg)
+    DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
+        cfg.MODEL.WEIGHTS, resume=args.resume
+    )
+    res = Trainer.test(cfg, model)
+    return res
 
-    return None
 
-
-# noinspection DuplicatedCode
 if __name__ == "__main__":
     args = default_argument_parser().parse_args()
     print("Command Line Args:", args)
 
-    # DEBUG ONLY
+    # DEBUG ONLY (DELETE FOR PRODUCTION)
     weights = "/home/yoann/PycharmProjects/VECCAR/experiment/2021_03_31__22:12:49 - 100 fois 1 moins Wi/model_final.pth"
-    output_dir = os.path.join("experiment", datetime.now().strftime("%Y_%m_%d__%H:%M:%S"))
+    output_dir = tempfile.TemporaryDirectory()
 
     args.config_file = "configs/Veccar/Veccar.yaml"
     args.eval_only = False
     args.num_gpus = 1
     args.image = "/home/yoann/PycharmProjects/VECCAR/datasets/cartographie/other/Tours_test.png"
     args.opts = ["MODEL.WEIGHTS", weights,
-                 "OUTPUT_DIR", output_dir]
+                 "OUTPUT_DIR", output_dir.name]
     # DEBUG ONLY
 
     launch(

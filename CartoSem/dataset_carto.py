@@ -4,10 +4,28 @@ import numpy as np
 import glob
 
 
-# TODO Get class repartition : return a vector of the percentage representation of each class
 # TODO Refactoring
 
+def get_cartography_dicts(img_dir):
+    """
+    Create the dictionary of the dataset
+    """
+
+    img_path = os.path.join(img_dir, "Img/*")
+    dataset_dicts = []
+    for idx, img in enumerate(glob.glob(img_path)):
+        image = cv2.imread(img)
+        img_height, img_width = image.shape[:2]
+        record = {"file_name": img, "image_id": idx, "height": img_height, "width": img_width,
+                  "sem_seg_file_name": os.path.join(img_dir, "GT/", os.path.basename(img))}
+        dataset_dicts.append(record)
+    return dataset_dicts
+
+
 def compute_class_proportion():
+    """
+    Return the
+    """
     create_tree_structure()
     dictionaries = create_dict_from_sources()
 
@@ -38,10 +56,14 @@ def compute_class_proportion():
         print(hist)
         total = sum(hist)
         proportion = hist/total
-        print(proportion)
+        return proportion
 
 
 def create_tree_structure():
+    """
+    Create tree structure needed for the dataset.
+    If files exist, remove the files.
+    """
     root = "dataset"
     directories = ["train/GT", "train/Img", "val/GT", "val/Img"]
 
@@ -58,7 +80,10 @@ def create_tree_structure():
 
 
 def create_dict_from_sources():
-    path = "source"
+    """
+    return a dictionary compute from source file with all elements
+    """
+    path = "../datasets/cartographie/source"
     images = glob.glob(os.path.join(path, "Img_*"))
     label = os.path.join(path, "label")
     dictionaries = []
@@ -82,6 +107,9 @@ def create_dict_from_sources():
 
 
 def create_dataset():
+    """
+    create the dataset
+    """
     PROCESS = True
     final_height = 512
     final_width = 1024
@@ -122,11 +150,11 @@ def create_dataset():
         for i in range(crop_height):
             for j in range(crop_width):
                 index += 1
-                path_img_cl = os.path.join("dataset/train/Img/", str(index).zfill(3) + ".png")
+                path_img_cl = os.path.join("../dataset/train/Img/", str(index).zfill(3) + ".png")
                 image_crop = image[i * final_height:(i + 1) * final_height, j * final_width:(j + 1) * final_width]
 
                 # classical
-                path_label = os.path.join("dataset/train/GT/", str(index).zfill(3) + ".png")
+                path_label = os.path.join("../dataset/train/GT/", str(index).zfill(3) + ".png")
                 label_crop = label[i * final_height:(i + 1) * final_height, j * final_width:(j + 1) * final_width]
 
                 # Save

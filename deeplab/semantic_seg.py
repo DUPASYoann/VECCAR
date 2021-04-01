@@ -170,7 +170,7 @@ class DeepLabV3PlusHead(nn.Module):
             # VECCAR
             elif self.loss_type == "cross_entropy_weighted":
                 # TODO get the weight from dataset
-                weight = torch.tensor([(1/0.65807747), (1/0.2924867),  (1/0.01131824), (1/0.03811759)])
+                weight = torch.tensor([100*(1-0.65807747), 100*(1-0.2924867),  100*(1-0.01131824), 100*(1-0.03811759)])
                 self.loss = nn.CrossEntropyLoss(weight=weight, reduction="mean", ignore_index=self.ignore_value)
             # VECCAR
             else:
